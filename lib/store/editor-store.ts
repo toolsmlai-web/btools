@@ -1,5 +1,41 @@
 import { create } from "zustand";
 
+const DEFAULT_APP_CODE = `import { useState } from 'react';
+
+function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-lg shadow-2xl">
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">
+          Welcome to Lovable Clone 🚀
+        </h1>
+        <p className="text-gray-600 mb-6">
+          Built for Bangladesh market with ❤️
+        </p>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setCount(count - 1)}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+          >
+            -
+          </button>
+          <span className="text-2xl font-bold">{count}</span>
+          <button
+            onClick={() => setCount(count + 1)}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+          >
+            +
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;`;
+
 export interface Message {
   id: string;
   role: "user" | "assistant";
@@ -85,39 +121,3 @@ export const useEditorStore = create<EditorStore>((set) => ({
   previewCode: DEFAULT_APP_CODE,
   setPreviewCode: (code) => set({ previewCode: code }),
 }));
-
-const DEFAULT_APP_CODE = `import { useState } from 'react';
-
-function App() {
-  const [count, setCount] = useState(0);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-2xl">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">
-          Welcome to Lovable Clone 🚀
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Built for Bangladesh market with ❤️
-        </p>
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setCount(count - 1)}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-          >
-            -
-          </button>
-          <span className="text-2xl font-bold">{count}</span>
-          <button
-            onClick={() => setCount(count + 1)}
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
-          >
-            +
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default App;`;
