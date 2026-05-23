@@ -8,14 +8,16 @@ export function EditorLayout() {
   return (
     <div className="h-full w-full bg-background">
       <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={40} minSize={30}>
+        <ResizablePanel defaultSize={35} minSize={25}>
           <ChatPanel />
         </ResizablePanel>
         
-        <ResizableHandle />
+        <ResizableHandle withHandle className="bg-border/50 hover:bg-border transition-colors" />
         
-        <ResizablePanel defaultSize={60} minSize={40}>
-          <PreviewPanel />
+        <ResizablePanel defaultSize={65} minSize={35}>
+          <div className="h-full w-full bg-card/30">
+            <PreviewPanel />
+          </div>
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

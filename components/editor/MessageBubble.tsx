@@ -14,22 +14,22 @@ export function MessageBubble({ message }: MessageBubbleProps) {
   return (
     <div
       className={cn(
-        "flex w-full",
+        "flex w-full gap-2",
         isUser ? "justify-end" : "justify-start"
       )}
     >
       <div
         className={cn(
-          "max-w-[80%] rounded-lg px-4 py-2",
+          "max-w-[85%] rounded-xl px-4 py-3 text-sm leading-relaxed",
           isUser
-            ? "bg-primary text-primary-foreground"
-            : "bg-muted text-foreground"
+            ? "bg-primary text-primary-foreground shadow-lg"
+            : "bg-card border border-border/50"
         )}
       >
         {isUser ? (
           <p className="text-sm">{message.content}</p>
         ) : (
-          <div className="prose prose-sm dark:prose-invert max-w-none">
+          <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0 prose-code:bg-background prose-code:text-accent prose-a:text-primary hover:prose-a:text-primary/80">
             <ReactMarkdown>{message.content}</ReactMarkdown>
           </div>
         )}
