@@ -59,9 +59,22 @@ export function ChatPanel() {
         }
       }
     } catch (error: any) {
+      const errorMsg = error.message || "An unknown error occurred";
+      let userFriendlyMessage = errorMsg;
+      
+      if (errorMsg.includes("ANTHROPIC_API_KEY")) {
+        userFriendlyMessage = "Configuration needed: ANTHROPIC_API_KEY is not set. Please add it in your project settings.";
+      } else if (errorMsg.includes("Authentication")) {
+        userFriendlyMessage = "Authentication failed. Please verify your API key is correct.";
+      } else if (errorMsg.includes("rate_limit")) {
+        userFriendlyMessage = "Rate limit reached. Please wait a moment and try again.";
+      } else if (errorMsg.includes("timeout")) {
+        userFriendlyMessage = "Request timed out. Please try again.";
+      }
+      
       addMessage({
         role: "assistant",
-        content: `Error: ${error.message}. Please try again.`,
+        content: `⚠️ ${userFriendlyMessage}`,
       });
     } finally {
       setLoading(false);

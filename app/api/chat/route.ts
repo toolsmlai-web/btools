@@ -3,12 +3,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { SYSTEM_PROMPT } from "@/lib/prompts/system";
 import { TOOLS } from "@/lib/prompts/tools";
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY || "",
-});
-
 export async function POST(request: NextRequest) {
   try {
+    // Check for API key
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "ANTHROPIC_API_KEY environment variable is not set. Please configure your API key in the project settings." },
+        { status: 500 }
+      );
+    }
+
+    const anthropic = new Anthropic({ apiKey });
     const { messages, files } = await request.json();
 
     // Build context from files
@@ -25,9 +31,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ response });
   } catch (error: any) {
     console.error("Claude API Error:", error);
+    
+    // Provide more helpful error messages
+    let errorMessage = error.message || "Failed to process request";
+    if (error.message?.includes("authentication")) {
+      errorMessage = "Authentication failed. Please check your ANTHROPIC_API_KEY.";
+    } else if (error.message?.includes("rate_limit")) {
+      errorMessage = "Rate limit exceeded. Please try again in a moment.";
+    } else if (error.message?.includes("timeout")) {
+      errorMessage = "Request timed out. Please try again.";
+    }
+    
     return NextResponse.json(
-      { error: error.message || "Failed to process request" },
-      { status: 500 }
+      { error: errorMessage },
+      { status: error.status || 500 }
     );
   }
 }
