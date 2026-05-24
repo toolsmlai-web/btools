@@ -34,14 +34,16 @@ An AI-powered React code editor built with Next.js and Claude AI. Chat with an i
    pnpm install
    ```
 
-2. **Configure API key**
+2. **Configure API key** (Important!)
    ```bash
    cp .env.example .env.local
    ```
-   Edit `.env.local` and add your Anthropic API key:
+   Edit `.env.local` and add your **actual** Anthropic API key:
    ```
    ANTHROPIC_API_KEY=sk-ant-xxxxxxxxxxxxx
    ```
+   
+   ⚠️ **Critical:** The key must start with `sk-ant-` (not `vck_`). If you added a Vercel environment variable, see [ANTHROPIC_API_KEY_SETUP.md](ANTHROPIC_API_KEY_SETUP.md) for details on getting your actual Anthropic API key.
 
 3. **Run development server**
    ```bash
@@ -89,9 +91,10 @@ An AI-powered React code editor built with Next.js and Claude AI. Chat with an i
 ## Troubleshooting
 
 ### "ANTHROPIC_API_KEY is not set"
-- Verify `.env.local` exists with your API key
-- Restart dev server after adding the key
+- Verify `.env.local` exists with your **actual** Anthropic API key (starts with `sk-ant-`)
+- Restart dev server after adding the key: `pkill -f "next dev"` then `pnpm run dev`
 - Check API key is valid at [console.anthropic.com](https://console.anthropic.com/)
+- See [ANTHROPIC_API_KEY_SETUP.md](ANTHROPIC_API_KEY_SETUP.md) for detailed setup instructions
 
 ### "Authentication failed"
 - Confirm API key has sufficient credits
