@@ -7,6 +7,7 @@ export async function POST(request: NextRequest) {
   try {
     // Check for API key
     const apiKey = process.env.ANTHROPIC_API_KEY;
+    
     if (!apiKey) {
       return NextResponse.json(
         { error: "ANTHROPIC_API_KEY environment variable is not set. Please configure your API key in the project settings." },
