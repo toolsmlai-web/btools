@@ -7,7 +7,13 @@ export async function POST(request: NextRequest) {
   try {
     // Check for API key
     const apiKey = process.env.ANTHROPIC_API_KEY;
+    console.log("[v0] API Route - Checking ANTHROPIC_API_KEY");
+    console.log("[v0] API Key present:", !!apiKey);
+    console.log("[v0] API Key length:", apiKey?.length || 0);
+    console.log("[v0] All env keys:", Object.keys(process.env).filter(k => k.includes("ANTHROPIC")).join(", "));
+    
     if (!apiKey) {
+      console.error("[v0] ANTHROPIC_API_KEY not found in environment");
       return NextResponse.json(
         { error: "ANTHROPIC_API_KEY environment variable is not set. Please configure your API key in the project settings." },
         { status: 500 }
