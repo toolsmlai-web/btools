@@ -75,3 +75,53 @@
     @apply transition-all duration-200 ease-out;
   }
 }
+
+@layer utilities {
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+  
+  @keyframes gentle-scale {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.02);
+    }
+  }
+  
+  @keyframes depth-shift {
+    0%, 100% {
+      transform: translateZ(0px);
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    }
+    50% {
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+    }
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-gentle-scale {
+    animation: gentle-scale 3s ease-in-out infinite;
+  }
+  
+  .animate-depth-shift {
+    animation: depth-shift 2s ease-in-out infinite;
+  }
+  
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+}

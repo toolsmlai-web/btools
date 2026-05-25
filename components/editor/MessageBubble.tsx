@@ -14,17 +14,21 @@ export function MessageBubble({ message }: MessageBubbleProps) {
   return (
     <div
       className={cn(
-        "flex w-full gap-2",
+        "flex w-full gap-2 group",
         isUser ? "justify-end" : "justify-start"
       )}
     >
       <div
         className={cn(
-          "max-w-[85%] rounded-xl px-4 py-3 text-sm leading-relaxed",
+          "max-w-[85%] rounded-xl px-4 py-3 text-sm leading-relaxed transition-all duration-300",
           isUser
-            ? "bg-primary text-primary-foreground shadow-lg"
-            : "bg-card border border-border/50"
+            ? "bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:-translate-y-1"
+            : "bg-card border border-border/50 hover:border-border/80 hover:bg-card/80 hover:shadow-md hover:-translate-y-0.5"
         )}
+        style={{
+          transformStyle: "preserve-3d",
+          perspective: "1200px",
+        }}
       >
         {isUser ? (
           <p className="text-sm">{message.content}</p>
