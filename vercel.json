@@ -3,31 +3,5 @@
   "devCommand": "pnpm run dev",
   "installCommand": "pnpm install",
   "framework": "nextjs",
-  "regions": ["sin1"],
-  "env": {
-    "ANTHROPIC_API_KEY": {
-      "description": "Optional: Anthropic Claude API key from https://console.anthropic.com/",
-      "required": false
-    },
-    "OPENAI_API_KEY": {
-      "description": "Optional: OpenAI GPT-4 API key from https://platform.openai.com/",
-      "required": false
-    },
-    "GEMINI_API_KEY": {
-      "description": "Optional: Google Gemini API key from https://makersuite.google.com/",
-      "required": false
-    },
-    "NEXT_PUBLIC_SUPABASE_URL": {
-      "description": "Optional: Supabase URL",
-      "required": false
-    },
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": {
-      "description": "Optional: Supabase public key",
-      "required": false
-    },
-    "SUPABASE_SERVICE_ROLE_KEY": {
-      "description": "Optional: Supabase service role key",
-      "required": false
-    }
-  }
+  "regions": ["sin1"]
 }
