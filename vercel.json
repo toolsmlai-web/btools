@@ -5,9 +5,29 @@
   "framework": "nextjs",
   "regions": ["sin1"],
   "env": {
-    "ANTHROPIC_API_KEY": "@anthropic-api-key",
-    "NEXT_PUBLIC_SUPABASE_URL": "@next_public_supabase_url",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@next_public_supabase_anon_key",
-    "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key"
+    "ANTHROPIC_API_KEY": {
+      "description": "Optional: Anthropic Claude API key from https://console.anthropic.com/",
+      "required": false
+    },
+    "OPENAI_API_KEY": {
+      "description": "Optional: OpenAI GPT-4 API key from https://platform.openai.com/",
+      "required": false
+    },
+    "GEMINI_API_KEY": {
+      "description": "Optional: Google Gemini API key from https://makersuite.google.com/",
+      "required": false
+    },
+    "NEXT_PUBLIC_SUPABASE_URL": {
+      "description": "Optional: Supabase URL",
+      "required": false
+    },
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": {
+      "description": "Optional: Supabase public key",
+      "required": false
+    },
+    "SUPABASE_SERVICE_ROLE_KEY": {
+      "description": "Optional: Supabase service role key",
+      "required": false
+    }
   }
 }
