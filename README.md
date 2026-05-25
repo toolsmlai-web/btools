@@ -1,10 +1,12 @@
 # Lovable Clone AI - React Code Editor
 
-An AI-powered React code editor built with Next.js and Claude AI. Chat with an intelligent assistant to generate, modify, and deploy React components in real-time.
+An AI-powered React code editor built with Next.js supporting multiple AI providers. Chat with an intelligent assistant to generate, modify, and deploy React components in real-time.
 
 ## Features
 
-- **AI Chat Assistant** - Describe what you want to build, and Claude generates React code
+- **Multi-Provider AI** - Support for Anthropic Claude, OpenAI GPT-4, and Google Gemini
+- **Provider Selection** - Switch between AI providers with a dropdown selector
+- **AI Chat Assistant** - Describe what you want to build, and AI generates React code
 - **Live Preview** - Sandpack-powered preview of your React components  
 - **Code Editor** - Edit code directly with syntax highlighting
 - **Responsive Layout** - Resizable three-panel interface
@@ -13,7 +15,10 @@ An AI-powered React code editor built with Next.js and Claude AI. Chat with an i
 ## Tech Stack
 
 - **Frontend**: Next.js 15, React 18, TypeScript
-- **AI**: Anthropic Claude API (Sonnet 4)
+- **AI Providers**: 
+  - Anthropic Claude Sonnet 4
+  - OpenAI GPT-4 Turbo
+  - Google Gemini 2.0 Flash
 - **Code Preview**: Sandpack
 - **Styling**: Tailwind CSS + shadcn/ui
 - **State**: Zustand
@@ -25,7 +30,10 @@ An AI-powered React code editor built with Next.js and Claude AI. Chat with an i
 
 - Node.js 18+
 - pnpm (or npm)
-- Anthropic API key from [console.anthropic.com](https://console.anthropic.com/)
+- At least one API key from:
+  - [Anthropic Console](https://console.anthropic.com/) (Claude)
+  - [OpenAI Platform](https://platform.openai.com/) (GPT-4)
+  - [Google AI Studio](https://makersuite.google.com) (Gemini)
 
 ### Setup
 
@@ -34,16 +42,23 @@ An AI-powered React code editor built with Next.js and Claude AI. Chat with an i
    pnpm install
    ```
 
-2. **Configure API key** (Important!)
+2. **Configure API Keys** (Add at least one)
    ```bash
    cp .env.example .env.local
    ```
-   Edit `.env.local` and add your **actual** Anthropic API key:
+   Edit `.env.local` and add one or more API keys:
    ```
+   # Anthropic (Claude)
    ANTHROPIC_API_KEY=sk-ant-xxxxxxxxxxxxx
+   
+   # OpenAI (GPT-4)
+   OPENAI_API_KEY=sk-xxxxxxxxxxxxx
+   
+   # Google Gemini
+   GEMINI_API_KEY=xxxxxxxxxxxxx
    ```
    
-   ⚠️ **Critical:** The key must start with `sk-ant-` (not `vck_`). If you added a Vercel environment variable, see [ANTHROPIC_API_KEY_SETUP.md](ANTHROPIC_API_KEY_SETUP.md) for details on getting your actual Anthropic API key.
+   See [PROVIDER_SETUP.md](PROVIDER_SETUP.md) for detailed setup instructions for each provider.
 
 3. **Run development server**
    ```bash
@@ -53,20 +68,33 @@ An AI-powered React code editor built with Next.js and Claude AI. Chat with an i
 
 ## Usage
 
-1. **Chat Panel (Left)** - Type requests to Claude:
+1. **Select AI Provider** - Click the provider dropdown button above the input:
+   - **Claude (Anthropic)** - Yellow button
+   - **GPT-4 (OpenAI)** - Green button
+   - **Gemini (Google)** - Blue button
+
+2. **Chat Panel (Left)** - Type requests to your selected AI:
    - "Create a todo list app"
    - "Add a dark mode toggle"
    - "Make the buttons larger"
 
-2. **Preview Panel (Center)** - See your React app render in real-time
+3. **Preview Panel (Center)** - See your React app render in real-time
 
-3. **Code Editor (Right)** - Edit code using the Sandpack editor
+4. **Code Editor (Right)** - Edit code using the Sandpack editor
+
+## Switching Providers
+
+If you have multiple API keys configured:
+1. Click the provider button above the chat input
+2. Select a different provider from the menu
+3. The app will use the selected provider for the next message
+4. Your selection persists during the session
 
 ## Project Structure
 
 ```
 /app
-  /api/chat         - Claude API integration
+  /api/chat         - Multi-provider AI integration (Claude, GPT-4, Gemini)
   /layout.tsx       - Root layout
   /page.tsx         - Main page
   /globals.css      - Global styles

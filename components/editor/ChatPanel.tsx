@@ -5,12 +5,22 @@ import { useEditorStore } from "@/lib/store/editor-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, AlertCircle } from "lucide-react";
+import { Send, AlertCircle, ChevronDown } from "lucide-react";
 import { MessageBubble } from "./MessageBubble";
+
+type AIProvider = "anthropic" | "openai" | "gemini";
+
+const PROVIDER_CONFIG = {
+  anthropic: { label: "Claude (Anthropic)", color: "bg-yellow-600 hover:bg-yellow-700" },
+  openai: { label: "GPT-4 (OpenAI)", color: "bg-emerald-600 hover:bg-emerald-700" },
+  gemini: { label: "Gemini (Google)", color: "bg-blue-600 hover:bg-blue-700" },
+};
 
 export function ChatPanel() {
   const [input, setInput] = useState("");
   const [apiKeyMissing, setApiKeyMissing] = useState(false);
+  const [selectedProvider, setSelectedProvider] = useState<AIProvider>("anthropic");
+  const [showProviderMenu, setShowProviderMenu] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { messages, isLoading, addMessage, setLoading, files, updateFile } = useEditorStore();
 
@@ -38,6 +48,7 @@ export function ChatPanel() {
           files: Object.fromEntries(
             Object.entries(files).map(([path, file]) => [path, file.content])
           ),
+          provider: selectedProvider,
         }),
       });
 
@@ -106,9 +117,17 @@ export function ChatPanel() {
               <div className="flex gap-3">
                 <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-semibold text-red-300 mb-1">Anthropic API key not configured</p>
+                  <p className="text-sm font-semibold text-red-300 mb-1">AI API key not configured</p>
                   <p className="text-xs text-red-200">
-                    Add your API key to <code className="bg-red-900 px-2 py-1 rounded text-xs">.env.local</code> as <code className="bg-red-900 px-2 py-1 rounded text-xs">ANTHROPIC_API_KEY=sk-ant-...</code> and restart the dev server.
+                    Add your API key to <code className="bg-red-900 px-2 py-1 rounded text-xs">.env.local</code>:
+                    <br className="mt-1" />
+                    Anthropic: <code className="bg-red-900 px-2 py-1 rounded text-xs">ANTHROPIC_API_KEY=sk-ant-...</code>
+                    <br />
+                    OpenAI: <code className="bg-red-900 px-2 py-1 rounded text-xs">OPENAI_API_KEY=sk-...</code>
+                    <br />
+                    Gemini: <code className="bg-red-900 px-2 py-1 rounded text-xs">GEMINI_API_KEY=...</code>
+                    <br className="mt-1" />
+                    Then restart the dev server.
                   </p>
                 </div>
               </div>
@@ -121,7 +140,7 @@ export function ChatPanel() {
               <p className="text-sm font-semibold mb-2">Ready to create</p>
               <p className="text-xs leading-relaxed mb-6 text-muted-foreground/80">
                 {apiKeyMissing 
-                  ? "Configure your Anthropic API key to get started." 
+                  ? "Configure an AI API key to get started. Select a provider above." 
                   : "Describe what you want to build and I'll help you create it."}
               </p>
               {!apiKeyMissing && (
@@ -167,6 +186,37 @@ export function ChatPanel() {
 
       {/* Input */}
       <form onSubmit={handleSubmit} className="p-4 border-t border-border/50 bg-card/50 backdrop-blur">
+        <div className="flex gap-2 mb-3">
+          <div className="relative">
+            <Button
+              type="button"
+              onClick={() => setShowProviderMenu(!showProviderMenu)}
+              className={`${PROVIDER_CONFIG[selectedProvider].color} text-white text-xs px-3 py-1 h-8 flex items-center gap-1`}
+            >
+              {PROVIDER_CONFIG[selectedProvider].label}
+              <ChevronDown className="h-3 w-3" />
+            </Button>
+            {showProviderMenu && (
+              <div className="absolute bottom-full mb-2 left-0 bg-card border border-border rounded-lg shadow-lg z-10 min-w-max">
+                {(Object.keys(PROVIDER_CONFIG) as AIProvider[]).map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => {
+                      setSelectedProvider(p);
+                      setShowProviderMenu(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors ${
+                      selectedProvider === p ? "bg-muted text-primary font-semibold" : "text-foreground"
+                    }`}
+                  >
+                    {PROVIDER_CONFIG[p].label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
         <div className="flex gap-2">
           <Input
             value={input}
@@ -180,7 +230,7 @@ export function ChatPanel() {
             disabled={isLoading || !input.trim() || apiKeyMissing}
             className="bg-primary hover:bg-primary/90 text-primary-foreground transition-colors disabled:opacity-50"
             size="sm"
-            title={apiKeyMissing ? "Configure Anthropic API key to enable chat" : ""}
+            title={apiKeyMissing ? "Configure API key to enable chat" : ""}
           >
             <Send className="h-4 w-4" />
           </Button>
