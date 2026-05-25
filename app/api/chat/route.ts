@@ -1,6 +1,3 @@
-import Anthropic from "@anthropic-ai/sdk";
-import OpenAI from "openai";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
 import { SYSTEM_PROMPT } from "@/lib/prompts/system";
 import { TOOLS } from "@/lib/prompts/tools";
@@ -78,6 +75,7 @@ export async function POST(request: NextRequest) {
 }
 
 async function callAnthropic(apiKey: string, messages: any[]) {
+  const Anthropic = (await import("@anthropic-ai/sdk")).default;
   const anthropic = new Anthropic({ apiKey });
   
   return anthropic.messages.create({
@@ -90,6 +88,7 @@ async function callAnthropic(apiKey: string, messages: any[]) {
 }
 
 async function callOpenAI(apiKey: string, messages: any[]) {
+  const OpenAI = (await import("openai")).default;
   const openai = new OpenAI({ apiKey });
   
   return openai.chat.completions.create({
@@ -101,6 +100,7 @@ async function callOpenAI(apiKey: string, messages: any[]) {
 }
 
 async function callGemini(apiKey: string, messages: any[]) {
+  const { GoogleGenerativeAI } = await import("@google/generative-ai");
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
   
