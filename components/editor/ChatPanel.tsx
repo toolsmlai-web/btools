@@ -28,7 +28,10 @@ export function ChatPanel() {
 
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Scroll to bottom when messages change
+    setTimeout(() => {
+      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 0);
   }, [messages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,33 +62,47 @@ export function ChatPanel() {
         throw new Error(data.error);
       }
 
-      // Process Claude's response
-      const assistantMessage = data.response.content.find(
-        (c: any) => c.type === "text"
-      )?.text || "I processed your request.";
+      // Parse response based on provider
+      let assistantMessage = "";
+      const usedProvider = data.provider || selectedProvider;
+
+      if (usedProvider === "anthropic") {
+        // Anthropic response format
+        assistantMessage = data.response.content.find(
+          (c: any) => c.type === "text"
+        )?.text || "I processed your request.";
+        
+        // Handle Anthropic tool calls (file edits)
+        const toolCalls = data.response.content.filter((c: any) => c.type === "tool_use");
+        for (const tool of toolCalls) {
+          if (tool.name === "edit_file") {
+            updateFile(tool.input.path, tool.input.content);
+          }
+        }
+      } else if (usedProvider === "openai") {
+        // OpenAI response format
+        assistantMessage = data.response.choices?.[0]?.message?.content || "I processed your request.";
+      } else if (usedProvider === "gemini") {
+        // Gemini response format
+        assistantMessage = data.response.text?.() || data.response.candidates?.[0]?.content?.parts?.[0]?.text || "I processed your request.";
+      }
       
       addMessage({ role: "assistant", content: assistantMessage });
-
-      // Handle tool calls (file edits)
-      const toolCalls = data.response.content.filter((c: any) => c.type === "tool_use");
-      for (const tool of toolCalls) {
-        if (tool.name === "edit_file") {
-          updateFile(tool.input.path, tool.input.content);
-        }
-      }
     } catch (error: any) {
       const errorMsg = error.message || "An unknown error occurred";
       let userFriendlyMessage = errorMsg;
       
-      if (errorMsg.includes("ANTHROPIC_API_KEY")) {
+      if (errorMsg.includes("API_KEY") && errorMsg.includes("not configured")) {
         setApiKeyMissing(true);
-        userFriendlyMessage = "Configuration needed: ANTHROPIC_API_KEY is not set. Please add it in your project settings.";
-      } else if (errorMsg.includes("Authentication")) {
+        userFriendlyMessage = "API key not configured. Please add your AI provider key (.env.local) and restart.";
+      } else if (errorMsg.includes("Authentication") || errorMsg.includes("401")) {
         userFriendlyMessage = "Authentication failed. Please verify your API key is correct.";
-      } else if (errorMsg.includes("rate_limit")) {
+      } else if (errorMsg.includes("rate_limit") || errorMsg.includes("429")) {
         userFriendlyMessage = "Rate limit reached. Please wait a moment and try again.";
       } else if (errorMsg.includes("timeout")) {
         userFriendlyMessage = "Request timed out. Please try again.";
+      } else if (errorMsg.includes("JSON")) {
+        userFriendlyMessage = "Invalid response format from API. Please try again.";
       }
       
       addMessage({
