@@ -6,7 +6,7 @@ import { useEditorStore } from "@/lib/store/editor-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, AlertCircle, ChevronDown } from "lucide-react";
+import { Send, AlertCircle, ChevronDown, Sparkles } from "lucide-react";
 import { MessageBubble } from "./MessageBubble";
 
 type AIProvider = "anthropic" | "openai" | "gemini";
@@ -24,8 +24,11 @@ export function ChatPanel() {
   const [showProviderMenu, setShowProviderMenu] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { messages, isLoading, addMessage, setLoading, files, updateFile } = useEditorStore();
-
-
+  const quickStarts = [
+    "Build a polished landing page",
+    "Create a responsive dashboard",
+    "Add authentication and onboarding",
+  ];
 
   useEffect(() => {
     // Scroll to bottom when messages change
@@ -40,6 +43,7 @@ export function ChatPanel() {
 
     const userMessage = input.trim();
     setInput("");
+    setApiKeyMissing(false);
     addMessage({ role: "user", content: userMessage });
     setLoading(true);
 
@@ -167,31 +171,30 @@ export function ChatPanel() {
           )}
           
           {messages.length === 0 && (
-            <div className="text-center text-muted-foreground py-12">
-              <div className="mb-4 text-4xl opacity-50">✨</div>
-              <p className="text-sm font-semibold mb-2">Ready to create</p>
-              <p className="text-xs leading-relaxed mb-6 text-muted-foreground/80">
-                {apiKeyMissing 
-                  ? "Configure an AI API key to get started. Select a provider above." 
-                  : "Describe what you want to build and I'll help you create it."}
-              </p>
+            <div className="flex flex-col gap-5 py-8 animate-slide-up">
+              <div className="flex items-center gap-3">
+                <div className="flex size-10 items-center justify-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/30">
+                  <Sparkles aria-hidden="true" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Start a new build</p>
+                  <p className="text-xs text-muted-foreground">Describe the product. Lovavle shapes the first version.</p>
+                </div>
+              </div>
               {!apiKeyMissing && (
-                <div className="bg-card/40 rounded-lg p-4 text-left border border-border/50">
-                  <p className="text-xs font-semibold mb-3 text-primary">Try asking:</p>
-                  <ul className="text-xs space-y-2 text-muted-foreground/90">
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary mt-1">•</span>
-                      <span>"Create a todo list app"</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary mt-1">•</span>
-                      <span>"Add dark mode toggle"</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-primary mt-1">•</span>
-                      <span>"Make buttons larger"</span>
-                    </li>
-                  </ul>
+                <div className="flex flex-col gap-2">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Suggested starting points</p>
+                  {quickStarts.map((prompt) => (
+                    <button
+                      key={prompt}
+                      type="button"
+                      onClick={() => setInput(prompt)}
+                      className="flex items-center justify-between rounded-xl border border-border/70 bg-card/40 px-3 py-3 text-left text-xs text-muted-foreground transition-colors hover:border-primary/50 hover:bg-primary/10 hover:text-foreground"
+                    >
+                      {prompt}
+                      <span aria-hidden="true">→</span>
+                    </button>
+                  ))}
                 </div>
               )}
             </div>

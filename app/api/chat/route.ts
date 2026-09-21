@@ -4,18 +4,21 @@ import { TOOLS } from "@/lib/prompts/tools";
 
 type AIProvider = "anthropic" | "openai" | "gemini";
 
-function getActiveProvider(): { provider: AIProvider; apiKey: string | null } {
-  // Check which API key is available (in priority order)
-  if (process.env.ANTHROPIC_API_KEY) {
-    return { provider: "anthropic", apiKey: process.env.ANTHROPIC_API_KEY };
+function getActiveProvider(requestedProvider?: AIProvider): { provider: AIProvider; apiKey: string | null } {
+  const keys: Record<AIProvider, string | undefined> = {
+    anthropic: process.env.ANTHROPIC_API_KEY,
+    openai: process.env.OPENAI_API_KEY,
+    gemini: process.env.GEMINI_API_KEY,
+  };
+
+  if (requestedProvider && keys[requestedProvider]) {
+    return { provider: requestedProvider, apiKey: keys[requestedProvider] ?? null };
   }
-  if (process.env.OPENAI_API_KEY) {
-    return { provider: "openai", apiKey: process.env.OPENAI_API_KEY };
-  }
-  if (process.env.GEMINI_API_KEY) {
-    return { provider: "gemini", apiKey: process.env.GEMINI_API_KEY };
-  }
-  return { provider: "anthropic", apiKey: null };
+
+  const fallback = (Object.keys(keys) as AIProvider[]).find((provider) => keys[provider]);
+  return fallback
+    ? { provider: fallback, apiKey: keys[fallback] ?? null }
+    : { provider: requestedProvider ?? "anthropic", apiKey: null };
 }
 
 function getMissingKeyError(provider: AIProvider): string {
@@ -31,8 +34,11 @@ export async function POST(request: NextRequest) {
   try {
     const { messages, files, provider: requestedProvider } = await request.json();
     
-    // Determine which provider to use
-    const { provider, apiKey } = getActiveProvider();
+    // Honor the provider selected in the workspace, with a safe configured-key fallback.
+    const normalizedProvider = ["anthropic", "openai", "gemini"].includes(requestedProvider)
+      ? (requestedProvider as AIProvider)
+      : undefined;
+    const { provider, apiKey } = getActiveProvider(normalizedProvider);
     
     if (!apiKey) {
       return NextResponse.json(
@@ -113,7 +119,7 @@ async function callGemini(apiKey: string, messages: any[]) {
   });
 }
 
-function buildContextMessages(messages: any[], files: Record<string, string>) {
+function buildContextMessages(messages: any[] = [], files: Record<string, string> = {}) {
   const contextMessage = {
     role: "user" as const,
     content: `Current project files:\n${Object.entries(files)
